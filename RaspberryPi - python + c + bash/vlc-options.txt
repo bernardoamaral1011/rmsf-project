@@ -1,0 +1,24 @@
+/*	vlc-option
+ * Video and audio streaming options and its many constraints
+ */
+
+/*AUDIO, works outside router, but quality is too bad and doent work in app (http)*/
+
+cvlc alsa://hw:1,0 --sout '#standard{access=http,mux=ogg,dst=:3008}'
+
+/*AUDIO, doent work outside router neither on the app currently (rtsp)*/
+
+cvlc alsa://hw:1,0 --sout '#rtp{sdp=rtsp://:3008}'
+
+/*Works only inside router, but not in app. Has AUDIO and VIDEO (rtsp)*/
+
+cvlc v4l2:///dev/video0 :input-slave=alsa://hw:1,0 --sout '#transcode{vcodec=mp4v,width=320,height=180,acodec=mpga,v800,ab=128}:rtp{sdp=rtsp://:3009/}' --sout-rtp-rtcp-mux --h264-fps=5.0 :demux=h264
+
+/*Works only inside router (rtsp)*/
+
+cvlc v4l2:///dev/video0 <--sout '#transcode{vcodec=mp4v,width=320,height=180,acodec=mpga,vb=800,ab=128}:rtp{sdp=rtsp/:3009/}' --sout-rtp-rtcp-mux --h264 fps=5.0 :demux=h264
+
+
+/*Works outside the router but not in the app (http)*/
+
+cvlc v4l2:///dev/video0 --sout '#transcode{vcodec=mp4v,width=320,height=180,acodec=mpga,vb=800,ab=128}:standard{access=http,mux=ogg,dst=:3009}' --h264-fps=5.0 :demux=h264
